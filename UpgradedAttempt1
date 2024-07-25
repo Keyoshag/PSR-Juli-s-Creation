@@ -1,0 +1,189 @@
+"""
+Name: Wedding Cake Ordering System for Juli’s Creations
+Purpose: To help future brides and grooms order their dream cake for their wedding.
+Reason: To assist the bakery in operating more efficiently, saving time on phone calls,
+        and allowing customers to explore all available options for wedding cakes.
+Goals:
+    1. Receive customer inputs and provide feedback on availability.
+    2. Offer accurate cake estimates and display a message that final costing will be confirmed directly through the bakery.
+    3. Provide accurate recommendations for cake size based on the number of guests.
+Target Audience: Couples scheduling cake orders at least 2 months in advance, of all genders and orientations.
+"""
+
+import tkinter as tk  # Importing tkinter module for GUI elements
+from tkinter import messagebox  # Importing messagebox for error dialogs
+from datetime import datetime  # Importing datetime for date validation
+
+
+# Define the main application class
+class WeddingCakeApp:
+    # Initialize the main window components
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Juli's Creations - Wedding Cake Ordering System")
+        self.create_main_window()
+
+    def create_main_window(self):
+        # Creating labels and entry fields for user input in the window
+        tk.Label(self.root, text="Wedding Cake Ordering System").grid(row=0, columnspan=2)
+
+        tk.Label(self.root, text="Wedding Date (MM-DD-YYYY):").grid(row=1, column=0)
+        self.date_entry = tk.Entry(self.root)
+        self.date_entry.grid(row=1, column=1)
+
+        tk.Label(self.root, text="Number of Guests:").grid(row=2, column=0)
+        self.guests_entry = tk.Entry(self.root)
+        self.guests_entry.grid(row=2, column=1)
+
+        tk.Label(self.root, text="Color Scheme:").grid(row=3, column=0)
+        self.color_entry = tk.Entry(self.root)
+        self.color_entry.grid(row=3, column=1)
+
+        tk.Label(self.root, text="Cake Flavor(s):").grid(row=4, column=0)
+        self.flavor_entry = tk.Entry(self.root)
+        self.flavor_entry.grid(row=4, column=1)
+
+        tk.Label(self.root, text="Desired Frosting Type:").grid(row=5, column=0)
+        self.frosting_entry = tk.Entry(self.root)
+        self.frosting_entry.grid(row=5, column=1)
+
+        tk.Label(self.root, text="Any Writing:").grid(row=6, column=0)
+        self.writing_entry = tk.Entry(self.root)
+        self.writing_entry.grid(row=6, column=1)
+
+        tk.Label(self.root, text="Cake Decorations:").grid(row=7, column=0)
+        self.decorations_entry = tk.Entry(self.root)
+        self.decorations_entry.grid(row=7, column=1)
+
+        # Button to submit and reset form
+        tk.Button(self.root, text="Submit", command=self.confirm_order).grid(row=8, column=0)
+        tk.Button(self.root, text="Reset", command=self.reset_entries).grid(row=8, column=1)
+
+    def reset_entries(self):
+        # Clear all the input fields
+        self.date_entry.delete(0, tk.END)
+        self.guests_entry.delete(0, tk.END)
+        self.color_entry.delete(0, tk.END)
+        self.flavor_entry.delete(0, tk.END)
+        self.frosting_entry.delete(0, tk.END)
+        self.writing_entry.delete(0, tk.END)
+        self.decorations_entry.delete(0, tk.END)
+
+    def confirm_order(self):
+        # Input validation
+        date = self.date_entry.get()
+        guests = self.guests_entry.get()
+        flavor = self.flavor_entry.get()
+        # Initialize the customizations count
+        customizations = 0
+
+        # Validate wedding date
+        try:
+            selected_date = datetime.strptime(date, "%m-%d-%Y")
+            if selected_date <= datetime.now():
+                raise ValueError("Date must be in the future")
+        except ValueError as e:
+            messagebox.showerror("Invalid input", str(e))
+            return
+
+        # Validate number of guests
+        try:
+            guests = int(guests)
+            if guests <= 0:
+                raise ValueError("Please enter a positive number for the number of guests.")
+        except ValueError as e:
+            messagebox.showerror("Invalid input", str(e))
+            return
+
+        # Validate cake flavor(s)
+        if not flavor:
+            messagebox.showerror("Invalid input", "Please enter at least one cake flavor.")
+            return
+
+        # Calculating costs
+        flavors_count = len(flavor.split(','))  # Count the number of flavors
+        if flavors_count == 1:
+            flavor_cost = 80
+        elif flavors_count == 2:
+            flavor_cost = 100
+        else:
+            flavor_cost = 150
+
+        # Calculate the number of customizations
+        if self.color_entry.get():
+            customizations += 1
+        if self.frosting_entry.get():
+            customizations += 1
+        if self.writing_entry.get():
+            customizations += 1
+        if self.decorations_entry.get():
+            customizations += 1
+
+        customization_cost = customizations * 30  # Cost for customizations
+
+        # Recommend the number of tiers based on the number of guests
+        if guests <= 50:
+            tiers = 2
+        elif 51 <= guests <= 100:
+            tiers = 3
+        else:
+            tiers = 4
+
+        tiers_cost = tiers * 25
+        total_cost = flavor_cost + customization_cost + tiers_cost
+
+        # Display a confirmation dialog with order details
+        message = (f"Order Details:\n\nWedding Date: {date}\nNumber of Guests: {guests}\n"
+                   f"Recommended Number of Tiers: {tiers}\nCake Flavor(s): {flavor}\n"
+                   f"Flavor Cost: ${flavor_cost}\nCustomization Cost: ${customization_cost}\n"
+                   f"Tiers Cost: ${tiers_cost}\nTotal Estimated Cost: ${total_cost}\n\n"
+                   "Do you confirm this order?")
+
+        response = messagebox.askyesno("Confirm Order", message)
+        if response:
+            self.show_confirmation(date, guests, tiers, flavor, flavor_cost, customization_cost, tiers_cost, total_cost)
+
+    # Create a new top-level window for confirmation
+    def show_confirmation(self, date, guests, tiers, flavor, flavor_cost, customization_cost, tiers_cost, total_cost):
+        confirmation_window = tk.Toplevel(self.root)
+        confirmation_window.title("Order Confirmation")
+
+        # Display order details in the confirmation window
+        tk.Label(confirmation_window, text="Order Confirmation").grid(row=0, columnspan=2)
+
+        tk.Label(confirmation_window, text="Wedding Date:").grid(row=1, column=0)
+        tk.Label(confirmation_window, text=date).grid(row=1, column=1)
+
+        tk.Label(confirmation_window, text="Number of Guests:").grid(row=2, column=0)
+        tk.Label(confirmation_window, text=guests).grid(row=2, column=1)
+
+        tk.Label(confirmation_window, text="Recommended Number of Tiers:").grid(row=3, column=0)
+        tk.Label(confirmation_window, text=tiers).grid(row=3, column=1)
+
+        tk.Label(confirmation_window, text="Cake Flavor(s):").grid(row=4, column=0)
+        tk.Label(confirmation_window, text=flavor).grid(row=4, column=1)
+
+        tk.Label(confirmation_window, text="Flavor Cost:").grid(row=5, column=0)
+        tk.Label(confirmation_window, text=f"${flavor_cost}").grid(row=5, column=1)
+
+        tk.Label(confirmation_window, text="Customization Cost:").grid(row=6, column=0)
+        tk.Label(confirmation_window, text=f"${customization_cost}").grid(row=6, column=1)
+
+        tk.Label(confirmation_window, text="Tiers Cost:").grid(row=7, column=0)
+        tk.Label(confirmation_window, text=f"${tiers_cost}").grid(row=7, column=1)
+
+        tk.Label(confirmation_window, text="Total Estimated Cost:").grid(row=8, column=0)
+        tk.Label(confirmation_window, text=f"${total_cost}").grid(row=8, column=1)
+
+        # Disclaimer that price is confirmed by the bakery
+        tk.Label(confirmation_window, text="Final costing will be confirmed directly through the bakery.").grid(row=9,
+                                                                                                                columnspan=2)
+
+        tk.Button(confirmation_window, text="Close", command=confirmation_window.destroy).grid(row=10,
+                                                                                               columnspan=2)  # Close button
+
+
+if __name__ == "__main__":
+    root = tk.Tk()  # Create the root window
+    app = WeddingCakeApp(root)  # Create an instance of the WeddingCakeApp
+    root.mainloop()  # Start the Tkinter event loop
