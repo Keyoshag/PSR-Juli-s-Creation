@@ -1,0 +1,35 @@
+Welcome to Juli's Creations Wedding Cake Ordering System. This application allows customers to conveniently order custom wedding cakes by providing their preferences and receiving an estimated cost.
+
+System Requirements
+•	Python 3.x
+•	Tkinter library
+•	PIL (Pillow) library
+Installation
+1.	Ensure Python 3. x is installed on your system.
+2.	In a terminal window Install the required libraries by running the following commands:
+3.	In a terminal window insert the following commands:
+pip install tk
+pip install pillow
+Download the application files and the image files main.png and Confirmation.png.
+Using the Application
+1.	Main Window:
+o	Wedding Date (MM-DD-YYYY): Enter the desired wedding date.
+o	Number of Guests: Enter the number of guests expected.
+o	Color Scheme: Enter the preferred color scheme.
+o	Cake Flavor(s): Enter the desired cake flavor(s). Multiple flavors can be entered separated by commas.
+o	Desired Frosting Type: Enter the preferred frosting type.
+o	Cake Decorations: Enter any additional cake decorations.
+o	Submit Button: Click to submit the order and calculate the cost.
+o	Reset Button: Click to clear all input fields.
+2.	Confirmation Window:
+o	Displays the entered details and estimated costs.
+o	Close Button: Click to close the confirmation window.
+Features
+•	Input Validation: Ensures valid data entries (e.g., a future date for the wedding, a positive number of guests).
+•	Cost Calculation: Estimates the total cost based on the number of flavors, customizations, and tiers.
+•	Recommendations: Suggest the number of cake tiers based on the number of guests.
+Error Handling
+If there are any errors during the input or processing, an error message will be displayed using a dialog box.
+Images
+•	Main Window: Displays an example of a wedding cake.
+•	Confirmation Window: Displays a confirmation example.
